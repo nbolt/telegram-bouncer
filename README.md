@@ -8,7 +8,7 @@ Run
 ----
 
 
-`TELEGRAM_TOKEN=xxx REDIS_URL=xxx REDIS_PASS=xxx REDIS_DB=xxx ./telegram-bouncer`
+`TELEGRAM_TOKEN=xxx REDIS_URL=xxx REDIS_PASS=xxx REDIS_DB=xxx PORT=xxx ./telegram-bouncer`
 
 
 API
