@@ -4,6 +4,7 @@ import "os"
 import "fmt"
 import "net/http"
 import "strconv"
+import "strings"
 import "github.com/go-martini/martini"
 import "gopkg.in/redis.v3"
 import "gopkg.in/telegram-bot-api.v1"
@@ -33,9 +34,8 @@ func main() {
         u := tgbotapi.NewUpdate(num+1)
         updates, _ := bot.GetUpdates(u)
         for _, update := range updates {
-          id := strconv.Itoa(update.Message.From.ID)
           client.Set("offset", update.UpdateID, 0)
-          client.Set(id, update.Message.Chat.ID, 0)
+          client.Set(update.Message.From.UserName, update.Message.Chat.ID, 0)
         }
         _, err = client.Get(params["user"]).Result()
       }
@@ -47,9 +47,11 @@ func main() {
         var msg tgbotapi.Chattable
         user, _ := client.Get(params["user"]).Result()
         userid, _ := strconv.Atoi(user)
-        switch params["_1"] {
+        mtype := strings.Split(params["_1"], "/")[0]
+        switch mtype {
           case "message":
-            msg = tgbotapi.NewMessage(userid, params["_2"])
+            text := strings.Split(params["_1"], "/")[1]
+            msg = tgbotapi.NewMessage(userid, text)
           case "photo":
             file, head, err := req.FormFile("file")
             if err != nil {
