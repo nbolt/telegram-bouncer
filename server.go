@@ -4,7 +4,6 @@ import "os"
 import "fmt"
 import "net/http"
 import "strconv"
-import "strings"
 import "github.com/go-martini/martini"
 import "gopkg.in/redis.v3"
 import "gopkg.in/telegram-bot-api.v1"
@@ -25,7 +24,7 @@ func main() {
   } else {
     m := martini.Classic()
     
-    m.Post("/telegram/:user/**", func(params martini.Params, req *http.Request) string {
+    m.Post("/telegram/:user/:type", func(params martini.Params, req *http.Request) string {
       bot, _ := tgbotapi.NewBotAPI(os.Getenv("TELEGRAM_TOKEN"))
       _, err := client.Get(params["user"]).Result()
       if err != nil {
@@ -47,11 +46,9 @@ func main() {
         var msg tgbotapi.Chattable
         user, _ := client.Get(params["user"]).Result()
         userid, _ := strconv.Atoi(user)
-        mtype := strings.Split(params["_1"], "/")[0]
-        switch mtype {
+        switch params["type"] {
           case "message":
-            text := strings.Split(params["_1"], "/")[1]
-            msg = tgbotapi.NewMessage(userid, text)
+            msg = tgbotapi.NewMessage(userid, req.FormValue("text"))
           case "photo":
             file, head, err := req.FormFile("file")
             if err != nil {

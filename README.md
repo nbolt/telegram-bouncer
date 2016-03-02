@@ -14,10 +14,11 @@ Run
 API
 ---
 
-`/telegram/:user_id/:message_type(/:text)`
+`POST` `/telegram/:user_id/:message_type`
 
 `:message_type` can be: `message`, `photo`, or `document`
 
-for `message` types, include the text as another url parameter.
+for `photo` and `document` types, include `file` as a `multipart/form-data` parameter.
 
-for `photo` and `document` types, include a `file` parameter as part of a `multipart/form-data` `POST` request.
+for `message` types, include `text`.
+
